@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useState, useEffect, Component } from 'react';
+import useWebSocket from 'react-use-websocket';
 
 function App() {
   let firstRequest = {
@@ -64,6 +65,18 @@ function App() {
   const [currentRequestList, setRequestList] = useState([])
   const [currentRequest, setCurrentRequest] = useState([])
 
+  const WS_URL = 'ws://127.0.0.1:3000';
+
+  const { sendMessage } = useWebSocket(WS_URL, {
+    onOpen: () => {
+      console.log('connection established!');
+    },
+
+    onMessage: (msg) => {
+      setRequestList([msg.data, ...currentRequestList]);
+    }
+  })
+
   const selectURL = (randomString) => {
     //let newUrlObj = GetRequestsByURL(randomString) // query server to get new URL object
     //setRequestList(newUrlObj.requests) 
@@ -100,7 +113,10 @@ function App() {
   const generateNewUrl = () => {
     fetch("http://localhost:3000/generateURL")
       .then((res) => res.json())
-      .then((data) => setCurrentURLs([data, ...currentURLs]));
+      .then((data) => {
+        setCurrentURLs([data, ...currentURLs]);
+        sendMessage(data.randomString)
+      });
   }
   
   return (
