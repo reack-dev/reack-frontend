@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useState, useEffect, Component } from 'react';
+import useWebSocket from 'react-use-websocket';
 
 function App() {
   let firstRequest = {
@@ -61,16 +62,25 @@ function App() {
 
   const [currentURLs, setCurrentURLs] = useState(urlItems) // change to empty array to get rid of dummy data
   const [activeURL, setActiveURL] = useState("")
-  const [activeURLFull, setActiveURLFull] = useState("Your selected URL will appear here")
   const [currentRequestList, setRequestList] = useState([])
   const [currentRequest, setCurrentRequest] = useState([])
-  const [currentRequestID, setCurrentRequestID] = useState("")
+
+  const WS_URL = 'ws://127.0.0.1:3000';
+
+  const { sendMessage } = useWebSocket(WS_URL, {
+    onOpen: () => {
+      console.log('connection established!');
+    },
+
+    onMessage: (msg) => {
+      setRequestList([msg.data, ...currentRequestList]);
+    }
+  })
 
   const selectURL = (randomString) => {
     //let newUrlObj = GetRequestsByURL(randomString) // query server to get new URL object
     //setRequestList(newUrlObj.requests) 
     setActiveURL(randomString)
-    setActiveURLFull("Currently selected URL endpoint: http://" + randomString + ".kush.chris.connor.maxamoretti.com/")
     
     if (randomString == "1a2s3d4f") { // delete this conditional once you delete dummy data
       setRequestList(firstURL.requests);
@@ -82,10 +92,13 @@ function App() {
     
   }
 
+  function GetRequestsByURL(randomString) { // get new URL from express app 1, add it to the array of current URLs
+      
+  }
+
   const selectRequest = (request) => {
     let bodyArr = formatBody(request.body);
     setCurrentRequest(bodyArr);
-    setCurrentRequestID(request.id)
   }
 
   const formatBody = (bodyObj) => {
@@ -101,21 +114,21 @@ function App() {
     fetch("http://localhost:3000/generateURL")
       .then((res) => res.json())
       .then((data) => {
-        setCurrentURLs([data, ...currentURLs])
-    });
-  }  
+        setCurrentURLs([data, ...currentURLs]);
+        sendMessage(data.randomString)
+      });
+  }
   
   return (
     <div>
       <header>
         <h1>RBin</h1> 
-        <button type="button" onClick={generateNewUrl}>Generate New URL</button> 
-        <div className="full_url">{activeURLFull}</div>
+        <button type="button" onClick={generateNewUrl}>Generate New URL</button>
       </header>
       <body>
         <div className="row">
           <div className="left"><UrlList urls={currentURLs} activeURL={activeURL} selectURL={selectURL} /></div>
-          <div className="middle"><RequestList requests={currentRequestList} currentRequestID={currentRequestID} selectRequest={selectRequest} /></div>
+          <div className="middle"><RequestList requests={currentRequestList} currentRequest={currentRequest} selectRequest={selectRequest} /></div>
           <div className="right"><RequestBody requestInfo={currentRequest}/></div>
         </div>
       </body>
@@ -125,53 +138,41 @@ function App() {
 
 const UrlList = ({ urls, activeURL, selectURL }) => {
   return (<div>
-    <h3>Active URLs</h3>
+    <h3>List for URLs</h3>
     <ul>
       {urls.map(function(obj, index) {
-        return <UrlItem obj={obj} id={index} selectURL={selectURL} activeURL={activeURL} />
+        return <UrlItem obj={obj} index={index} selectURL={selectURL} activeURL={activeURL} />
       })}
     </ul>
     </div>); // Iterate through array of URL items, display key components of each one 
 }
 
 function UrlItem({ obj, index, selectURL, activeURL }) {
-  if (activeURL == obj.randomString) { // display highlighted URL if its the selected one one 
-    return (<li index={index} onClick={() => selectURL(obj.randomString)} className="highlight_request_li">
-    {obj.randomString}
-    </li>); 
-  }
   return (<li index={index} onClick={() => selectURL(obj.randomString)} className="request_li">
     {obj.randomString}
     </li>); // Display each url item
 }
 
-function RequestList({ requests, currentRequestID, selectRequest }) {
+function RequestList({ requests, currentRequest, selectRequest }) {
   return (<div>
-    <h3>Requests</h3>
+    <h3>List for Requests</h3>
     <ul>
       {requests.map(function(requestObj, index) {
-        return <RequestItem requestObj={requestObj} id={requestObj.id} selectRequest={selectRequest} currentRequestID={currentRequestID} />
+        return <RequestItem requestObj={requestObj} index={requestObj.id} selectRequest={selectRequest} currentRequest={currentRequest} />
       })}
     </ul>
     </div>); // Iterate through array of request items, display key components of each one 
 }
 
-function RequestItem({ requestObj, id, selectRequest, currentRequestID }) {
-  let time = requestObj.createdAt.slice(13, 21) // slice correct time from request 
-
-  if (requestObj.id == currentRequestID) { // display highlighted URL if its the selected one one 
-    return (<li index={id} onClick={() => selectRequest(requestObj)} className="highlight_request_li" >
-    HTTP {requestObj.method} {requestObj.path} {time}
-    </li>);
-  }
-  return (<li index={id} onClick={() => selectRequest(requestObj)} className="request_li" >
-    HTTP {requestObj.method} {requestObj.path} {time}
+function RequestItem({ requestObj, index, selectRequest, currentRequest }) {
+  return (<li index={index} onClick={() => selectRequest(requestObj)} className="request_li" >
+    HTTP {requestObj.method} {requestObj.path} {requestObj.createdAt}
     </li>); // Display each request item
 }
 
 function RequestBody({ requestInfo }) {
   return (<div>
-    <h3>Request Body</h3>
+    <h3>Body of Request</h3>
     <ul id="request_details">
       {requestInfo.map(function(line, index) { return <RequestLine line={line} /> })}
     </ul>
