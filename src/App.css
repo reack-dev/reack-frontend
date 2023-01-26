@@ -1,0 +1,55 @@
+body {
+  background: url(gradient.webp)
+}
+
+.left {
+  float: left;
+  width: 15%;
+  border-style: solid;
+}
+
+.right {
+  float: right;
+  width: 50%;
+  border-style: solid;
+}
+
+.middle {
+  display: inline-block;
+  width: 33.5%;
+  border-style: solid;
+}
+
+ul {
+  padding-left: 0;
+}
+
+#request_details {
+  padding-left: 0;
+  text-align: left;
+  margin-left: 3rem;
+  list-style-type: none;
+}
+
+.request_li {
+  cursor: pointer;
+  height: 3.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  padding-left: 0.7rem;
+  border-radius: 1px;
+  background-color: whitesmoke;
+  box-shadow: 1px 7px #ddc6c6;
+  top: 0.5rem;
+  display: grid;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: -1px 1px 47px 10px rgba(0,0,0,0.31);
+-webkit-box-shadow: -1px 1px 47px 10px rgba(0,0,0,0.31);
+-moz-box-shadow: -1px 1px 47px 10px rgba(0,0,0,0.31);
+}
+
+
+
