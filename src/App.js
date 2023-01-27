@@ -3,71 +3,71 @@ import React, { useState, useEffect, Component } from 'react';
 import useWebSocket from 'react-use-websocket';
 
 function App() {
-  let firstRequest = {
-    id: 1,
-    method: "POST",
-    host: "hostst",
-    path: "/1",
-    headers: {
-      "Content type": "applicaiton/json",
-    },
-    body: { 
-      "some data here": "some other data here",
-      "some more data here": "even more data here",
-    },
-    createdAt: "1 2023-01-25T23:34:58.228Z",
-  }
+  // let firstRequest = {
+  //   id: 1,
+  //   method: "POST",
+  //   host: "hostst",
+  //   path: "/1",
+  //   headers: {
+  //     "Content type": "applicaiton/json",
+  //   },
+  //   body: { 
+  //     "some data here": "some other data here",
+  //     "some more data here": "even more data here",
+  //   },
+  //   createdAt: "1 2023-01-25T23:34:58.228Z",
+  // }
   
-  let secondRequest = {
-    id: 2,
-    method: "POST",
-    host: "host2",
-    path: "/2",
-    headers: {
-      "Content type": "applicaiton/json",
-    },
-    body: { 
-      "some data here2": "some other data here2",
-      "some more data here2": "even more data here2",
-    },
-    createdAt: "2 2022-01-25T23:34:58.228Z",
-  }
+  // let secondRequest = {
+  //   id: 2,
+  //   method: "POST",
+  //   host: "host2",
+  //   path: "/2",
+  //   headers: {
+  //     "Content type": "applicaiton/json",
+  //   },
+  //   body: { 
+  //     "some data here2": "some other data here2",
+  //     "some more data here2": "even more data here2",
+  //   },
+  //   createdAt: "2 2022-01-25T23:34:58.228Z",
+  // }
   
-  let thirdRequest = {
-    id: 3,
-    method: "POST",
-    host: "hos3",
-    path: "/3",
-    headers: {
-     "Content type": "applicaiton/json",
-    },
-    body: { 
-      "some data here3": "some other data here3",
-      "some more data here3": "even more data here3",
-    },
-    createdAt: "3 2021-01-25T23:34:58.228Z",
-  }
+  // let thirdRequest = {
+  //   id: 3,
+  //   method: "POST",
+  //   host: "hos3",
+  //   path: "/3",
+  //   headers: {
+  //    "Content type": "applicaiton/json",
+  //   },
+  //   body: { 
+  //     "some data here3": "some other data here3",
+  //     "some more data here3": "even more data here3",
+  //   },
+  //   createdAt: "3 2021-01-25T23:34:58.228Z",
+  // }
   
-  let firstURL = {
-    randomString: "1a2s3d4f",
-    requests: [firstRequest]
-  }
+  // let firstURL = {
+  //   randomString: "1a2s3d4f",
+  //   requests: [firstRequest]
+  // }
   
-  let secondURL = {
-    randomString: "4f5g6h7j",
-    requests: [secondRequest, thirdRequest]
-  }
+  // let secondURL = {
+  //   randomString: "4f5g6h7j",
+  //   requests: [secondRequest, thirdRequest]
+  // }
 
-  let urlItems = [firstURL, secondURL];
+  // let urlItems = [firstURL, secondURL];
 
-  const [currentURLs, setCurrentURLs] = useState(urlItems) // change to empty array to get rid of dummy data
+  const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
   const [activeURL, setActiveURL] = useState("")
   const [activeURLFull, setActiveURLFull] = useState("Your selected URL will appear here")
   const [currentRequestList, setRequestList] = useState([])
   const [currentRequest, setCurrentRequest] = useState([])
   const [currentRequestID, setCurrentRequestID] = useState("")
 
-  const WS_URL = 'ws://127.0.0.1:3000';
+  const WS_URL = 'wss://kush.chris.connor.maxamoretti.com/';
 
   const { sendMessage } = useWebSocket(WS_URL, {
     onOpen: () => {
@@ -80,19 +80,11 @@ function App() {
   })
 
   const selectURL = (randomString) => {
-    //let newUrlObj = GetRequestsByURL(randomString) // query server to get new URL object
-    //setRequestList(newUrlObj.requests) 
+    fetch(`https://kush.chris.connor.maxamoretti.com/display/${randomString}`)
+      .then((res) => res.json())
+      .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
-    setActiveURLFull("Currently selected URL endpoint: http://" + randomString + ".kush.chris.connor.maxamoretti.com/")
-    
-    if (randomString == "1a2s3d4f") { // delete this conditional once you delete dummy data
-      setRequestList(firstURL.requests);
-    } else if (randomString == "4f5g6h7j") {
-      setRequestList(secondURL.requests);
-    } else {
-      setRequestList([])
-    }
-    
+    setActiveURLFull("Currently selected URL endpoint: https://" + randomString + ".kush.chris.connor.maxamoretti.com/")    
   }
 
   const selectRequest = (request) => {
@@ -111,7 +103,7 @@ function App() {
   } // should return string containing body object
   
   const generateNewUrl = () => {
-    fetch("http://localhost:3000/generateURL")
+    fetch("https://kush.chris.connor.maxamoretti.com/generateURL")
       .then((res) => res.json())
       .then((data) => {
         setCurrentURLs([data, ...currentURLs]);
