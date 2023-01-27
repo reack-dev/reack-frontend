@@ -18,7 +18,6 @@ function App() {
     },
 
     onMessage: (msg) => {
-      console.log(msg.data);
       setRequestList([msg.data, ...currentRequestList]);
     }
   })
