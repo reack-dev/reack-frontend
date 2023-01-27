@@ -3,63 +3,6 @@ import React, { useState, useEffect, Component } from 'react';
 import useWebSocket from 'react-use-websocket';
 
 function App() {
-  // let firstRequest = {
-  //   id: 1,
-  //   method: "POST",
-  //   host: "hostst",
-  //   path: "/1",
-  //   headers: {
-  //     "Content type": "applicaiton/json",
-  //   },
-  //   body: { 
-  //     "some data here": "some other data here",
-  //     "some more data here": "even more data here",
-  //   },
-  //   createdAt: "1 2023-01-25T23:34:58.228Z",
-  // }
-  
-  // let secondRequest = {
-  //   id: 2,
-  //   method: "POST",
-  //   host: "host2",
-  //   path: "/2",
-  //   headers: {
-  //     "Content type": "applicaiton/json",
-  //   },
-  //   body: { 
-  //     "some data here2": "some other data here2",
-  //     "some more data here2": "even more data here2",
-  //   },
-  //   createdAt: "2 2022-01-25T23:34:58.228Z",
-  // }
-  
-  // let thirdRequest = {
-  //   id: 3,
-  //   method: "POST",
-  //   host: "hos3",
-  //   path: "/3",
-  //   headers: {
-  //    "Content type": "applicaiton/json",
-  //   },
-  //   body: { 
-  //     "some data here3": "some other data here3",
-  //     "some more data here3": "even more data here3",
-  //   },
-  //   createdAt: "3 2021-01-25T23:34:58.228Z",
-  // }
-  
-  // let firstURL = {
-  //   randomString: "1a2s3d4f",
-  //   requests: [firstRequest]
-  // }
-  
-  // let secondURL = {
-  //   randomString: "4f5g6h7j",
-  //   requests: [secondRequest, thirdRequest]
-  // }
-
-  // let urlItems = [firstURL, secondURL];
-
   const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
   const [activeURL, setActiveURL] = useState("")
   const [activeURLFull, setActiveURLFull] = useState("Your selected URL will appear here")
@@ -88,7 +31,7 @@ function App() {
   }
 
   const selectRequest = (request) => {
-    let bodyArr = formatBody(request.body);
+    let bodyArr = formatBody(request);
     setCurrentRequest(bodyArr);
     setCurrentRequestID(request.id)
   }
