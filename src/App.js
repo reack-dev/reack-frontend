@@ -8,7 +8,7 @@ function App() {
   const [activeURL, setActiveURL] = useState("")
   const [activeURLFull, setActiveURLFull] = useState("Your selected URL will appear here")
   const [currentRequestList, setRequestList] = useState([])
-  const [currentRequest, setCurrentRequest] = useState([])
+  const [currentRequest, setCurrentRequest] = useState(null)
   const [currentRequestID, setCurrentRequestID] = useState("")
 
   const WS_URL = 'wss://kush.chris.connor.maxamoretti.com/';
