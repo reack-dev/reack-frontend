@@ -40,6 +40,11 @@ function App() {
    // bodyObj = JSON.stringify(bodyObj)
     let newArr = []
     for (let key in bodyObj) {
+      if (typeof key == "object") {
+        for (let key2 in bodyObj[key]) {
+          newArr.push("  " + key2 + " : " + bodyObj[key][key2])
+        }
+      }
       newArr.push(key + " : " + bodyObj[key])
     }
     return newArr
