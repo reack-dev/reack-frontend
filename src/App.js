@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useState, useEffect, Component } from 'react';
 import useWebSocket from 'react-use-websocket';
+import ReactJson from 'react-json-view'
 
 function App() {
   const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
@@ -28,27 +29,30 @@ function App() {
       .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
     setActiveURLFull("Currently selected URL endpoint: https://" + randomString + ".kush.chris.connor.maxamoretti.com/")    
+    setCurrentRequest(null)
   }
 
   const selectRequest = (request) => {
-    let bodyArr = formatBody(request);
-    setCurrentRequest(bodyArr);
+    //let bodyArr = formatBody(request);
+    setCurrentRequest(request);
     setCurrentRequestID(request.id)
   }
 
-  const formatBody = (bodyObj) => {
-   // bodyObj = JSON.stringify(bodyObj)
-    let newArr = []
-    for (let key in bodyObj) {
-      if (typeof key == "object") {
-        for (let key2 in bodyObj[key]) {
-          newArr.push("  " + key2 + " : " + bodyObj[key][key2])
-        }
-      }
-      newArr.push(key + " : " + bodyObj[key])
-    }
-    return newArr
-  } // should return string containing body object
+  // const formatBody = (bodyObj) => {
+  //    bodyObj = JSON.stringify(bodyObj, null, 5)
+  //   // let newArr = []
+  //   // for (let key in bodyObj) {
+  //   //   if (typeof key == "object") {
+  //   //     for (let key2 in bodyObj[key]) {
+  //   //       newArr.push("  " + key2 + " : " + bodyObj[key][key2])
+  //   //     }
+  //   //   }
+  //   //   newArr.push(key + " : " + bodyObj[key])
+  //   // }
+  //   return bodyObj
+  // } // should return string containing body object
+
+  //obj = formatBody(obj)
   
   const generateNewUrl = () => {
     fetch("https://kush.chris.connor.maxamoretti.com/generateURL")
@@ -111,7 +115,7 @@ function RequestList({ requests, currentRequestID, selectRequest }) {
 }
 
 function RequestItem({ requestObj, id, selectRequest, currentRequestID }) {
-    let time = requestObj.createdAt.slice(13, 21) // slice correct time from request 
+    let time = requestObj.createdAt.slice(14, 22) // slice correct time from request 
  
     if (requestObj.id == currentRequestID) { // display highlighted URL if its the selected one one 
       return (<li index={id} onClick={() => selectRequest(requestObj)} className="highlight_request_li" >
@@ -124,12 +128,22 @@ function RequestItem({ requestObj, id, selectRequest, currentRequestID }) {
 }
 
 function RequestBody({ requestInfo }) {
-  return (<div>
-    <h3>Request Body</h3>
-    <ul id="request_details">
-      {requestInfo.map(function(line, index) { return <RequestLine line={line} /> })}
-    </ul>
-  </div>); // display body of request 
+  if (requestInfo !== null) {
+    return (<div>
+      <h3>Request Body</h3>
+      <ul id="request_details">
+        <ReactJson src={requestInfo} />
+      </ul>
+    </div>);
+  } else {
+    return (<div>
+      <h3>Request Body</h3>
+      <ul id="request_details">
+       
+      </ul>
+    </div>);
+  }
+   // display body of request 
 }
 
 function RequestLine({ line }) {
