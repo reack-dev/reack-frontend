@@ -11,7 +11,7 @@ function App() {
   const [currentRequest, setCurrentRequest] = useState(null)
   const [currentRequestID, setCurrentRequestID] = useState("")
 
-  const WS_URL = 'wss://kush.chris.connor.maxamoretti.com/';
+  const WS_URL = 'ws://localhost:3000/';
 
   const { sendMessage } = useWebSocket(WS_URL, {
     onOpen: () => {
@@ -19,12 +19,12 @@ function App() {
     },
 
     onMessage: (msg) => {
-      setRequestList([msg.data, ...currentRequestList]);
+      setRequestList([JSON.parse(msg.data), ...currentRequestList]);
     }
   })
 
   const selectURL = (randomString) => {
-    fetch(`https://kush.chris.connor.maxamoretti.com/display/${randomString}`)
+    fetch(`http://localhost:3000/display/${randomString}`)
       .then((res) => res.json())
       .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
@@ -55,7 +55,7 @@ function App() {
   //obj = formatBody(obj)
   
   const generateNewUrl = () => {
-    fetch("https://kush.chris.connor.maxamoretti.com/generateURL")
+    fetch("http://localhost:3000/generateURL")
       .then((res) => res.json())
       .then((data) => {
         setCurrentURLs([data, ...currentURLs]);
