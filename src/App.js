@@ -1,7 +1,11 @@
 import './App.css';
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState } from 'react';
 import useWebSocket from 'react-use-websocket';
-import ReactJson from 'react-json-view'
+import { JsonViewer } from '@textea/json-viewer'
+
+const Title = ({ title }) => <h3 className="font-bold px-2 py-2">{title}</h3>;
+const ItemActive = ({ text, onClick }) => <li className="text-white bg-sky-700 hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={onClick}>{text}</li>;
+const Item = ({ text, onClick }) => <li className="border-2 border-sky-700 hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={onClick} >{text}</li>
 
 function App() {
   const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
@@ -64,29 +68,29 @@ function App() {
   }
   
   return (
-    <div>
+    <div className="container mx-auto py-4">
       <header>
-        <h1>RBin</h1> 
-        <button type="button" onClick={generateNewUrl}>Generate New URL</button> 
+        <h1 className="text-3xl font-bold py-6">ReAct</h1> 
+        <button className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2" type="button" onClick={generateNewUrl}>Generate New URL</button> 
          <div className="full_url">{activeURLFull}</div>
       </header>
-      <body>
-        <div className="row">
-          <div className="left"><UrlList urls={currentURLs} activeURL={activeURL} selectURL={selectURL} /></div>
-          <div className="middle"><RequestList requests={currentRequestList} currentRequestID={currentRequestID} selectRequest={selectRequest} /></div>
-          <div className="right"><RequestBody requestInfo={currentRequest}/></div>
+      <main>
+        <div className="flex h-screen">
+          <div className="w-1/4 h-full border-2"><UrlList urls={currentURLs} activeURL={activeURL} selectURL={selectURL} /></div>
+          <div className="w-1/4 h-full border-2"><RequestList requests={currentRequestList} currentRequestID={currentRequestID} selectRequest={selectRequest} /></div>
+          <div className="w-2/4 h-full border-2"><RequestBody requestInfo={currentRequest}/></div>
         </div>
-      </body>
+      </main>
     </div>
   );
 }
 
 const UrlList = ({ urls, activeURL, selectURL }) => {
   return (<div>
-    <h3>Active URLs</h3>
+    <Title title="Active URLs" />
     <ul>
       {urls.map(function(obj, index) {
-        return <UrlItem obj={obj} id={index} selectURL={selectURL} activeURL={activeURL} />
+        return <UrlItem obj={obj} id={index} key={index} selectURL={selectURL} activeURL={activeURL} />
       })}
     </ul>
     </div>); // Iterate through array of URL items, display key components of each one 
@@ -94,18 +98,14 @@ const UrlList = ({ urls, activeURL, selectURL }) => {
 
 function UrlItem({ obj, index, selectURL, activeURL }) {
   if (activeURL == obj.randomString) { // display highlighted URL if its the selected one one 
-    return (<li index={index} onClick={() => selectURL(obj.randomString)} className="highlight_request_li">
-    {obj.randomString}
-    </li>); 
+    return <ItemActive index={index} text={obj.randomString} onClick={() => selectURL(obj.randomString)}/> 
   }
-  return (<li index={index} onClick={() => selectURL(obj.randomString)} className="request_li">
-    {obj.randomString}
-    </li>); // Display each url item
+  return <Item index={index} text={obj.randomString} onClick={() => selectURL(obj.randomString)}/> 
 }
 
 function RequestList({ requests, currentRequestID, selectRequest }) {
   return (<div>
-    <h3>Requests</h3>
+    <Title title="Requests" />
     <ul>
       {requests.map(function(requestObj, index) {
         return <RequestItem requestObj={requestObj} id={requestObj.id} selectRequest={selectRequest} currentRequestID={currentRequestID} />
@@ -130,9 +130,9 @@ function RequestItem({ requestObj, id, selectRequest, currentRequestID }) {
 function RequestBody({ requestInfo }) {
   if (requestInfo !== null) {
     return (<div>
-      <h3>Request Body</h3>
+      <Title title="Request Body" />
       <ul id="request_details">
-        <ReactJson src={requestInfo} />
+        <JsonViewer value={requestInfo} />
       </ul>
     </div>);
   } else {
@@ -146,8 +146,8 @@ function RequestBody({ requestInfo }) {
    // display body of request 
 }
 
-function RequestLine({ line }) {
-  return (<li> {line} </li>)
-}
+// function RequestLine({ line }) {
+//   return (<li> {line} </li>)
+// }
 
 export default App;
