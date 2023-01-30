@@ -5,7 +5,7 @@ import { JsonViewer } from '@textea/json-viewer'
 import toast, { Toaster } from 'react-hot-toast';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
-const domain = ".kush.chris.connor.maxamoretti.com"
+const domain = "kush.chris.connor.maxamoretti.com"
 
 const Logo = () => {
   return (
@@ -64,7 +64,7 @@ const Description = () => {
   )
 }
 const PublicUrl = ({ randomString }) => {
-  const url = randomString + domain
+  const url = randomString + '.' + domain
   return (
     <div className="flex items-center px-2 py-2">
       <span className="text-2xl">{url}</span>
