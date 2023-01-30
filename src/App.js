@@ -18,7 +18,7 @@ const Logo = () => {
 const ReAck = () => {
   return (
     <div className="flex items-center py-6">
-      <h1 className="text-8xl">ReAck</h1>
+      <h1 className="text-8xl font-serif">ReAck</h1>
     </div>
   )
 }
@@ -56,8 +56,8 @@ const Description = () => {
           </svg>
         </div>
         <div className="inline">
-          <p className="font-bold">You don't have any bins, yet.</p>
-          <p>Click "Generate New URL" to get your first bin and start receiving requests!</p>
+          <p className="font-bold">You don't have any endpoints, yet.</p>
+          <p>Click "Generate New Endpoint" to get your first endpoint and start receiving requests!</p>
         </div>
       </div>
     </div>
@@ -83,13 +83,13 @@ function App() {
   //   requests: [],
   // }
 
-  const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
+  const [currentURLs, setCurrentURLs] = useState([])
   const [activeURL, setActiveURL] = useState("")
   const [currentRequestList, setRequestList] = useState([])
   const [currentRequest, setCurrentRequest] = useState(null)
   const [currentRequestID, setCurrentRequestID] = useState("")
 
-  const WS_URL = 'ws://localhost:3000/';
+  const WS_URL = `ws://${domain}/`;
 
   const { sendMessage } = useWebSocket(WS_URL, {
     onOpen: () => {
@@ -104,7 +104,7 @@ function App() {
   })
 
   const selectURL = (randomString) => {
-    fetch(`http://localhost:3000/display/${randomString}`)
+    fetch(`http://${domain}/display/${randomString}`)
       .then((res) => res.json())
       .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
@@ -117,7 +117,7 @@ function App() {
   }
   
   const generateNewUrl = () => {
-    fetch("http://localhost:3000/generateURL")
+    fetch(`http://${domain}/generateURL`)
       .then((res) => res.json())
       .then((data) => {
         setCurrentURLs([data, ...currentURLs]);
@@ -169,7 +169,7 @@ function App() {
     return (
       <div className="grid grid-cols-1 place-items-center w-full h-2/5 border-2 border-dashed border-slate-400">
         <span>
-          Select a bin to start receiving and examining requests!
+          Select an endpoint to start receiving and examining requests!
         </span>
       </div>
     )
@@ -192,9 +192,18 @@ function App() {
   
   return (
     <div className="container mx-auto py-4 h-screen">
-      <Toaster />
+      <Toaster 
+        toastOptions={{
+          className: '',
+          style: {
+            border: '1px solid #713200',
+            padding: '16px',
+            color: '#713200',
+          },
+        }}
+      />
       <Logo />
-      <div className="grid grid-cols-1 place-items-center mt-28 mb-8">
+      <div className="grid grid-cols-1 place-items-center mt-20 mb-8">
         <ReAck />
         <Slogan />
         <GenerateUrlButton />
