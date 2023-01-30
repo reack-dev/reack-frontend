@@ -3,15 +3,29 @@ import React, { useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { JsonViewer } from '@textea/json-viewer'
 import toast, { Toaster } from 'react-hot-toast';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
+const domain = ".kush.chris.connor.maxamoretti.com"
+
+const Logo = () => {
+  return (
+    <div className="flex items-center py-6 mb-6">
+      <img className="w-20 h-20 mr-4 inline" src="https://openmoji.org/data/color/svg/1F4E6.svg"></img>
+      <div>
+        <h1 className="text-6xl font-thin">ReAck</h1>
+        <p className="text-slate-500">Generate your own <span className="underline font-bold text-black decoration-sky-500">endpoint</span> to receive <span className="underline font-bold text-black decoration-green-500">webhook</span> requests</p>
+      </div>
+    </div>
+  )
+}
 const Title = ({ title }) => <h3 className="font-bold px-2 py-2">{title}</h3>;
-const ItemActive = ({ text, onClick }) => <li className="text-white border-4 border-orange-700 bg-orange-700 hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={onClick}>{text}</li>;
-const Item = ({ text, onClick }) => <li className="border-4 border-orange-700 hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={onClick} >{text}</li>;
+const ItemActive = ({ text, onClick }) => <li className="text-white border-4 border-orange-700 bg-orange-700 hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 cursor-pointer" onClick={onClick}>{text}</li>;
+const Item = ({ text, onClick }) => <li className="transition ease-in-out duration-300 border-4 border-orange-700 hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 cursor-pointer" onClick={onClick} >{text}</li>;
 const Spin = () => {
   return (
     <div className="mx-2 m-2">
       <svg class="animate-spin -ml-1 mr-3 h-6 w-6 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
       Waiting for requests...
@@ -20,7 +34,7 @@ const Spin = () => {
 }
 const Description = () => {
   return (
-    <div className="grid place-items-center w-full h-128 border-2 border-dashed">
+    <div className="grid place-items-center w-full h-128 border-2 border-dashed border-slate-400">
       <div className="flex w-2/5 py-32 inline">
         <div>
           <svg className="w-20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,6 +51,19 @@ const Description = () => {
     </div>
   )
 }
+const PublicUrl = ({ randomString }) => {
+  const url = randomString + domain
+  return (
+    <div className="flex items-center px-2 py-2">
+      <span className="text-3xl">{url}</span>
+      <CopyToClipboard text={url} onCopy={() => toast('Copied to clipboard.')}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7 cursor-pointer inline ml-2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+        </svg>
+      </CopyToClipboard>
+    </div>
+  );
+}
 
 function App() {
   const localhost = {
@@ -44,9 +71,8 @@ function App() {
     requests: [],
   }
 
-  const [currentURLs, setCurrentURLs] = useState([localhost]) // change to empty array to get rid of dummy data
+  const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
   const [activeURL, setActiveURL] = useState("")
-  const [activeURLFull, setActiveURLFull] = useState("Your selected URL will appear here")
   const [currentRequestList, setRequestList] = useState([])
   const [currentRequest, setCurrentRequest] = useState(null)
   const [currentRequestID, setCurrentRequestID] = useState("")
@@ -70,7 +96,6 @@ function App() {
       .then((res) => res.json())
       .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
-    setActiveURLFull("Currently selected URL endpoint: https://" + randomString + ".kush.chris.connor.maxamoretti.com/")    
     setCurrentRequest(null)
   }
 
@@ -84,9 +109,8 @@ function App() {
       .then((res) => res.json())
       .then((data) => {
         setCurrentURLs([data, ...currentURLs]);
-        setActiveURL(data.randomString);
         sendMessage(data.randomString)
-        toast(`New URL generated`);
+        toast(`New Bin generated`);
       });
   }
 
@@ -94,10 +118,47 @@ function App() {
     if (currentURLs.length === 0) return <Description />
 
     return (
-      <div className="flex h-screen gap-2">
+      <div className="flex h-screen gap-12">
         <div className="w-1/5 h-full"><UrlList urls={currentURLs} activeURL={activeURL} selectURL={selectURL} /></div>
-        <div className="w-1/5 h-full"><RequestList requests={currentRequestList} currentRequestID={currentRequestID} selectRequest={selectRequest} /></div>
-        <div className="w-3/5 h-full"><RequestBody requestInfo={currentRequest}/></div>
+        {
+          (() => {
+            if (!activeURL) return <NoUrlSelected />
+            if (currentRequestList.length === 0) return <EmptyBin />
+
+            return <Bin />
+          })()
+        }
+      </div>
+    )
+  }
+
+  const Bin = () => {
+    return (
+      <div className="grid grid-cols-1 place-content-start w-full">
+        <PublicUrl randomString={activeURL} />
+        <div className="flex h-full">
+          <div className="w-1/4 h-full"><RequestList requests={currentRequestList} currentRequestID={currentRequestID} selectRequest={selectRequest} /></div>
+          <div className="w-3/4 h-full"><RequestBody requestInfo={currentRequest}/></div>
+        </div>
+      </div>
+    );
+  }
+
+  const EmptyBin = () => {
+    return (
+      <div className="grid grid-cols-1 place-content-start w-full">
+        <PublicUrl randomString={activeURL} />
+        <Spin />
+      </div>
+    );
+  }
+
+  const NoUrlSelected = () => {
+    return (
+      <div className="grid grid-cols-1 place-items-center w-full h-2/5 border-2 border-dashed border-slate-400">
+        <span>
+          Select a bin to start receiving and examining requests!
+        </span>
       </div>
     )
   }
@@ -107,9 +168,15 @@ function App() {
       <Toaster />
       <div className="container mx-auto py-4">
         <header>
-          <h1 className="text-3xl font-bold py-6"><img className="w-11 h-11 mr-2 inline" src="https://openmoji.org/data/color/svg/1F4E6.svg"></img>ReAck</h1> 
-          <button className="transition ease-in-out duration-500 text-white bg-blue-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-4" type="button" onClick={generateNewUrl}>Generate New URL</button> 
-          <div className="full_url">{activeURLFull}</div>
+          <Logo /> 
+          <button className="transition ease-in-out duration-500 text-white bg-blue-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-4" type="button" onClick={generateNewUrl}>
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 inline mr-2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <span>Generate New URL</span>
+            </div>
+          </button> 
         </header>
         <Main />
       </div>
@@ -119,7 +186,7 @@ function App() {
 
 const UrlList = ({ urls, activeURL, selectURL }) => {
   return (<div>
-    <Title title="Active URLs" />
+    <Title title="My Bins" />
     <ul className="mx-2 my-2">
       {urls.map(function(obj, index) {
         return <UrlItem obj={obj} id={index} key={index} selectURL={selectURL} activeURL={activeURL} />
