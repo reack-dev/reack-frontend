@@ -9,16 +9,28 @@ const domain = ".kush.chris.connor.maxamoretti.com"
 
 const Logo = () => {
   return (
-    <div className="flex items-center py-6 mb-6">
-      <img className="w-20 h-20 mr-4 inline" src="https://openmoji.org/data/color/svg/1F4E6.svg"></img>
-      <div>
-        <h1 className="text-6xl font-thin">ReAck</h1>
-        <p className="text-slate-500">Generate your own <span className="underline font-bold text-black decoration-sky-500">endpoint</span> to receive <span className="underline font-bold text-black decoration-green-500">webhook</span> requests</p>
-      </div>
+    <div>
+      <img className="w-20 h-20 -ml-14" src="https://openmoji.org/data/color/svg/1F4E6.svg" alt="logo"></img>
     </div>
   )
 }
-const Title = ({ title }) => <h3 className="font-bold px-2 py-2">{title}</h3>;
+
+const ReAck = () => {
+  return (
+    <div className="flex items-center py-6">
+      <h1 className="text-8xl">ReAck</h1>
+    </div>
+  )
+}
+
+const Slogan = () => {
+  return (
+    <div className="text-4xl font-thin mb-24">
+      <p className="text-slate-500">Generate your own <span className="underline font-bold text-black decoration-sky-500">endpoint</span> to receive <span className="underline font-bold text-black decoration-green-500">webhook</span> requests</p>
+    </div>
+  )
+}
+const Title = ({ title }) => <h3 className="font-bold text-2xl px-2 py-2">{title}</h3>;
 const ItemActive = ({ text, onClick }) => <li className="text-white border-4 border-orange-700 bg-orange-700 hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 cursor-pointer" onClick={onClick}>{text}</li>;
 const Item = ({ text, onClick }) => <li className="transition ease-in-out duration-300 border-4 border-orange-700 hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 cursor-pointer" onClick={onClick} >{text}</li>;
 const Spin = () => {
@@ -55,7 +67,7 @@ const PublicUrl = ({ randomString }) => {
   const url = randomString + domain
   return (
     <div className="flex items-center px-2 py-2">
-      <span className="text-3xl">{url}</span>
+      <span className="text-2xl">{url}</span>
       <CopyToClipboard text={url} onCopy={() => toast('Copied to clipboard.')}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7 cursor-pointer inline ml-2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
@@ -66,10 +78,10 @@ const PublicUrl = ({ randomString }) => {
 }
 
 function App() {
-  const localhost = {
-    randomString: 'localhost',
-    requests: [],
-  }
+  // const localhost = {
+  //   randomString: 'localhost',
+  //   requests: [],
+  // }
 
   const [currentURLs, setCurrentURLs] = useState([]) // change to empty array to get rid of dummy data
   const [activeURL, setActiveURL] = useState("")
@@ -162,31 +174,39 @@ function App() {
       </div>
     )
   }
+
+  const GenerateUrlButton = () => {
+    return (
+      <>
+        <button className="transition ease-in-out duration-500 text-white bg-blue-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xl px-5 py-2.5 text-center mr-2 mb-4" type="button" onClick={generateNewUrl}>
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 inline mr-2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Generate New Endpoint</span>
+          </div>
+        </button> 
+      </>
+    )
+  }
   
   return (
-    <div className="bg-slate-300 h-screen">
+    <div className="container mx-auto py-4 h-screen">
       <Toaster />
-      <div className="container mx-auto py-4">
-        <header>
-          <Logo /> 
-          <button className="transition ease-in-out duration-500 text-white bg-blue-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-4" type="button" onClick={generateNewUrl}>
-            <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 inline mr-2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              <span>Generate New URL</span>
-            </div>
-          </button> 
-        </header>
-        <Main />
+      <Logo />
+      <div className="grid grid-cols-1 place-items-center mt-28 mb-8">
+        <ReAck />
+        <Slogan />
+        <GenerateUrlButton />
       </div>
+      <Main />
     </div>
   );
 }
 
 const UrlList = ({ urls, activeURL, selectURL }) => {
   return (<div>
-    <Title title="My Bins" />
+    <Title title="My Endpoints" />
     <ul className="mx-2 my-2">
       {urls.map(function(obj, index) {
         return <UrlItem obj={obj} id={index} key={index} selectURL={selectURL} activeURL={activeURL} />
@@ -196,14 +216,14 @@ const UrlList = ({ urls, activeURL, selectURL }) => {
 }
 
 function UrlItem({ obj, index, selectURL, activeURL }) {
-  if (activeURL == obj.randomString) { // display highlighted URL if its the selected one one 
+  if (activeURL === obj.randomString) { // display highlighted URL if its the selected one one 
     return <ItemActive index={index} text={obj.randomString} onClick={() => selectURL(obj.randomString)}/> 
   }
   return <Item index={index} text={obj.randomString} onClick={() => selectURL(obj.randomString)}/> 
 }
 
 function RequestList({ requests, currentRequestID, selectRequest }) {
-  if (requests.length == 0) {
+  if (requests.length === 0) {
     return <><Spin /></>;
   }
   return (<div>
@@ -220,7 +240,7 @@ function RequestItem({ requestObj, selectRequest, currentRequestID }) {
     let time = requestObj.createdAt.slice(14, 22) // slice correct time from request
     const text = `HTTP ${requestObj.method} ${requestObj.path} ${time}`
  
-    if (requestObj.id == currentRequestID) { // display highlighted URL if its the selected one one 
+    if (requestObj.id === currentRequestID) { // display highlighted URL if its the selected one one 
       return <ItemActive text={text} onClick={() => selectRequest(requestObj)}/>
     }
     return  <Item text={text} onClick={() => selectRequest(requestObj)}/>
