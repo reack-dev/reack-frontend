@@ -89,7 +89,7 @@ function App() {
   const [currentRequest, setCurrentRequest] = useState(null)
   const [currentRequestID, setCurrentRequestID] = useState("")
 
-  const WS_URL = `ws://${domain}/`;
+  const WS_URL = `wss://${domain}/`;
 
   const { sendMessage } = useWebSocket(WS_URL, {
     onOpen: () => {
@@ -104,7 +104,7 @@ function App() {
   })
 
   const selectURL = (randomString) => {
-    fetch(`http://${domain}/display/${randomString}`)
+    fetch(`https://${domain}/display/${randomString}`)
       .then((res) => res.json())
       .then((data) => setRequestList(data.requests));
     setActiveURL(randomString)
@@ -117,7 +117,7 @@ function App() {
   }
   
   const generateNewUrl = () => {
-    fetch(`http://${domain}/generateURL`)
+    fetch(`https://${domain}/generateURL`)
       .then((res) => res.json())
       .then((data) => {
         setCurrentURLs([data, ...currentURLs]);
